@@ -1,0 +1,1102 @@
+<meta charset="utf-8">
+<style>
+/* ===== 雪人投研 · ZFile 现代工作台主题 ===== */
+:root {
+  --xh-tree-w: 260px;
+  --xh-primary: #2563eb;
+  --xh-primary-soft: #eff6ff;
+  --xh-text: #1f2937;
+  --xh-sub: #6b7280;
+  --xh-line: #e5e7eb;
+  --xh-card: #ffffff;
+  --xh-radius: 14px;
+}
+html { scroll-behavior: smooth; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif !important;
+  background: linear-gradient(180deg, #eaf1fb 0%, #f4f7fb 220px, #f6f8fa 100%) !important;
+  color: var(--xh-text);
+  overflow-x: hidden;
+}
+body.xh-resizing {
+  user-select: none !important;
+  cursor: col-resize !important;
+}
+body.xh-resizing iframe {
+  pointer-events: none !important;
+}
+
+/* 顶栏：毛玻璃悬浮 */
+.xh-header {
+  position: sticky; top: 0; z-index: 60;
+  background: rgba(255, 255, 255, .88) !important;
+  backdrop-filter: saturate(180%) blur(14px);
+  -webkit-backdrop-filter: saturate(180%) blur(14px);
+  border-bottom: 1px solid var(--xh-line);
+  box-shadow: 0 1px 12px rgba(31, 53, 112, .05);
+}
+.xh-header .header-left img.hope-image {
+  width: 36px; height: 36px; border-radius: 9px;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, .25);
+}
+.xh-sitename {
+  font-size: 18px; font-weight: 800; letter-spacing: .5px; margin-left: 10px; user-select: none;
+  background: linear-gradient(90deg, #1d4ed8, #0284c7);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+
+/* 隐藏顶栏无用的视图切换按钮 */
+button[aria-label="switch layout"],
+.header-right button.hope-menu__trigger {
+  display: none !important;
+}
+
+/* ===== 左侧目录树 ===== */
+#xh-tree, #xh-tree-resizer { display: none; }
+body.xh-shell #xh-tree {
+  display: flex; flex-direction: column;
+  position: fixed; top: 64px; left: 0; bottom: 0;
+  width: var(--xh-tree-w, 260px); min-width: 180px; max-width: 580px;
+  z-index: 45; overflow: hidden;
+  background: #ffffff; border-right: 1px solid var(--xh-line);
+  padding: 0; box-sizing: border-box;
+}
+#xh-tree-body {
+  flex: 1; overflow-y: auto; overflow-x: hidden; padding: 10px 6px 14px;
+}
+#xh-tree-footer {
+  flex-shrink: 0; border-top: 1px solid var(--xh-line); padding: 8px 12px; background: #fafbfc;
+}
+.xh-tree-footer-link {
+  display: flex; align-items: center; gap: 6px; color: #64748b; font-size: 12.5px;
+  text-decoration: none; padding: 4px 6px; border-radius: 6px; transition: all .12s;
+}
+.xh-tree-footer-link:hover {
+  background: #eff6ff; color: #1d4ed8;
+}
+body.xh-shell #xh-tree-resizer {
+  display: block;
+  position: fixed; top: 64px; bottom: 0;
+  left: var(--xh-tree-w, 260px); width: 8px; margin-left: -4px;
+  cursor: col-resize; z-index: 55; user-select: none;
+  transition: background .15s;
+}
+#xh-tree-resizer:hover, body.xh-resizing #xh-tree-resizer {
+  background: rgba(37, 99, 235, 0.45);
+}
+.xh-tree-head {
+  font-size: 12px; font-weight: 700; color: #9ca3af; padding: 4px 10px 8px; letter-spacing: 1px;
+}
+.xh-row {
+  display: flex; align-items: center; gap: 6px; padding: 6px 8px;
+  border-radius: 8px; cursor: pointer; font-size: 13px; color: #374151;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  transition: background .12s, color .12s;
+}
+.xh-row:hover { background: var(--xh-primary-soft); color: var(--xh-primary); }
+.xh-row.xh-active { background: #dbeafe; color: #1d4ed8; font-weight: 600; }
+.xh-arrow {
+  width: 14px; flex: none; text-align: center; color: #9ca3af; font-size: 10px;
+  transition: transform .15s; cursor: pointer;
+}
+.xh-arrow.xh-open { transform: rotate(90deg); }
+.xh-arrow.xh-placeholder { visibility: hidden; }
+.xh-tree-icon { flex: none; display: inline-flex; align-items: center; }
+.xh-row span.xh-node-title { overflow: hidden; text-overflow: ellipsis; }
+.xh-kids { margin-left: 14px; display: none; }
+.xh-kids.xh-show { display: block; }
+.xh-loading { color: #9ca3af; font-size: 12px; padding: 4px 6px 4px 26px; }
+
+/* 移动端目录树抽屉按钮 */
+#xh-tree-toggle {
+  display: none; position: fixed; left: 12px; bottom: 18px; z-index: 130;
+  width: 46px; height: 46px; border-radius: 50%; background: #2563eb; color: #fff;
+  border: none; box-shadow: 0 4px 16px rgba(37, 99, 235, .35); cursor: pointer; font-size: 18px;
+}
+
+/* ===== 三栏工作台外壳 ===== */
+body.xh-shell .body > *:not(#xh-shell) { display: none !important; }
+body.xh-shell .left-toolbar-box { display: none !important; }
+#xh-shell {
+  display: flex; gap: 14px; width: 100%;
+  height: calc(100vh - 84px); min-height: 520px;
+  box-sizing: border-box; align-items: stretch;
+}
+
+/* 中栏：文件列表卡片 */
+#xh-mid {
+  background: var(--xh-card); border: 1px solid var(--xh-line); border-radius: var(--xh-radius);
+  box-shadow: 0 4px 20px rgba(31, 53, 112, .06);
+  display: flex; flex-direction: column; overflow: hidden;
+  height: 100%; box-sizing: border-box;
+}
+#xh-crumb {
+  padding: 10px 14px 8px; font-size: 13px; color: var(--xh-sub);
+  border-bottom: 1px solid var(--xh-line); display: flex; align-items: center; gap: 6px;
+  flex-shrink: 0; background: #ffffff;
+  overflow-x: auto; white-space: nowrap;
+}
+#xh-crumb::-webkit-scrollbar { height: 3px; }
+#xh-crumb span.xc-a, #xh-crumb span { white-space: nowrap; flex-shrink: 0; }
+#xh-crumb span.xc-a { color: #2563eb; cursor: pointer; }
+#xh-crumb span.xc-a:hover { text-decoration: underline; }
+
+/* 公告栏 */
+#xh-anno {
+  display: flex; align-items: flex-start; gap: 8px; padding: 9px 14px;
+  background: #eff6ff; border-bottom: 1px solid #bfdbfe; font-size: 13px; color: #1e40af;
+  line-height: 1.45; flex-shrink: 0; position: relative;
+}
+#xh-anno-icon { flex: none; font-size: 14px; }
+#xh-anno-text { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+#xh-anno-close {
+  flex: none; border: none; background: transparent; color: #60a5fa; cursor: pointer;
+  font-size: 13px; padding: 2px 6px; border-radius: 4px; line-height: 1;
+}
+#xh-anno-close:hover { background: #dbeafe; color: #1e40af; }
+
+/* 目录说明 README */
+#xh-readme {
+  margin: 10px 10px 14px; padding: 12px 14px; background: #f8fafc;
+  border: 1px solid var(--xh-line); border-radius: 10px; font-size: 13px; color: #334155;
+  line-height: 1.6; flex-shrink: 0;
+}
+#xh-readme-head {
+  font-size: 12px; font-weight: 700; color: #64748b; letter-spacing: .5px; margin-bottom: 6px;
+}
+
+/* 中栏列表表头 */
+#xh-list-header {
+  display: flex; align-items: center; padding: 8px 14px; font-size: 12px; font-weight: 600;
+  color: #9ca3af; border-bottom: 1px solid var(--xh-line); background: #fafbfc;
+  user-select: none; flex-shrink: 0;
+}
+.xhh-name { flex: 1; }
+.xhh-size { width: 90px; text-align: right; }
+.xhh-time { width: 140px; text-align: right; }
+
+#xh-list { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 6px 8px; }
+.xhf-row {
+  display: flex; align-items: center; gap: 10px; padding: 8px 10px;
+  border-radius: 8px; cursor: pointer; font-size: 13.5px; color: var(--xh-text);
+  transition: background .12s, color .12s; position: relative;
+}
+.xhf-row:hover { background: var(--xh-primary-soft); color: var(--xh-primary); }
+.xhf-row.xh-sel { background: #dbeafe; color: #1d4ed8; font-weight: 600; }
+.xhf-row.xh-sel::before {
+  content: ''; position: absolute; left: 0; top: 8px; bottom: 8px; width: 3px;
+  border-radius: 2px; background: #2563eb;
+}
+.xhf-icon { flex: none; display: inline-flex; align-items: center; }
+.xhf-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.xhf-size { width: 90px; text-align: right; color: #9ca3af; font-size: 12.5px; flex: none; font-variant-numeric: tabular-nums; }
+.xhf-time { width: 140px; text-align: right; color: #9ca3af; font-size: 12.5px; flex: none; font-variant-numeric: tabular-nums; }
+
+/* 右栏：大屏宽屏预览面板 */
+#xh-right {
+  height: 100%; display: flex; flex-direction: column; overflow: hidden;
+  background: var(--xh-card); border: 1px solid var(--xh-line); border-radius: var(--xh-radius);
+  box-shadow: 0 4px 20px rgba(31, 53, 112, .06); box-sizing: border-box;
+}
+#xh-right-head {
+  display: flex; align-items: center; gap: 8px; padding: 10px 14px;
+  border-bottom: 1px solid var(--xh-line); background: #fafbfc; flex-shrink: 0;
+}
+#xh-right-title {
+  flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  font-weight: 600; font-size: 13.5px; color: #1f2937;
+}
+#xh-right-size {
+  background: #f1f5f9; color: #475569; padding: 2px 8px; border-radius: 6px;
+  font-size: 11.5px; font-weight: 500; flex: none;
+}
+.xh-head-actions { display: flex; align-items: center; gap: 4px; flex: none; }
+.xh-btn-icon {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 28px; height: 28px; border-radius: 6px; border: none; background: transparent;
+  color: #64748b; cursor: pointer; text-decoration: none; font-size: 13px;
+  transition: background .12s, color .12s;
+}
+.xh-btn-icon:hover { background: #e2e8f0; color: #0f172a; }
+.xh-btn-close:hover { background: #fee2e2; color: #dc2626; }
+
+#xh-right-body {
+  flex: 1; height: calc(100% - 48px); overflow: auto;
+  display: flex; flex-direction: column; background: #ffffff;
+}
+#xh-right-body iframe { width: 100%; height: 100%; flex: 1; border: 0; min-height: 100%; }
+#xh-right-body img { max-width: 100%; max-height: 100%; margin: auto; object-fit: contain; }
+#xh-right-body video { max-width: 100%; margin: auto; width: 100%; }
+#xh-right-body audio { width: 90%; margin: auto; }
+#xh-right-body pre {
+  flex: 1; overflow: auto; margin: 0; padding: 14px;
+  font-size: 13px; background: #0f172a; color: #e2e8f0;
+  white-space: pre-wrap; word-break: break-all;
+}
+.xh-pv-fallback {
+  flex: 1; display: flex; flex-direction: column; align-items: center;
+  justify-content: center; gap: 12px; color: #6b7280; font-size: 14px; padding: 30px; text-align: center;
+}
+
+/* 目录导读 Markdown 样式 */
+.xh-readme-wrap {
+  flex: 1; overflow-y: auto; padding: 24px 28px;
+  background: #ffffff; color: #1e293b; font-size: 14px; line-height: 1.7;
+}
+.xh-md-h1 {
+  font-size: 19px; font-weight: 700; color: #0f172a; margin: 0 0 16px;
+  padding-bottom: 8px; border-bottom: 1px solid var(--xh-line);
+}
+.xh-md-h2 {
+  font-size: 16px; font-weight: 700; color: #1e293b; margin: 20px 0 10px;
+}
+.xh-md-h3 {
+  font-size: 14.5px; font-weight: 700; color: #2563eb; margin: 16px 0 8px;
+}
+.xh-md-quote {
+  margin: 12px 0 16px; padding: 8px 14px; background: #eff6ff;
+  border-left: 3px solid #3b82f6; border-radius: 4px; color: #1d4ed8; font-size: 13.5px;
+}
+.xh-md-ul {
+  margin: 8px 0 14px 20px; padding: 0;
+}
+.xh-md-ul li {
+  margin-bottom: 6px; color: #334155;
+}
+.xh-md-ul strong {
+  color: #0f172a;
+}
+.xh-md-p {
+  margin: 8px 0; color: #334155;
+}
+
+/* ===== 响应式适配 ===== */
+/* 桌面视口级独立满高布局（>=701px）：左侧树、中栏、右侧预览栏三者完全解耦独立撑满到底部 */
+@media (min-width: 701px) {
+  html, body.xh-shell {
+    height: 100% !important;
+    overflow: hidden !important;
+  }
+  body.xh-shell #xh-tree {
+    top: 60px !important;
+    bottom: 0 !important;
+    height: calc(100vh - 60px) !important;
+  }
+  body.xh-shell #xh-tree-resizer {
+    top: 60px !important;
+    bottom: 0 !important;
+  }
+  body.xh-shell #xh-shell {
+    position: fixed !important;
+    top: 62px !important;
+    bottom: 12px !important;
+    left: calc(var(--xh-tree-w, 260px) + 12px) !important;
+    right: 14px !important;
+    width: auto !important;
+    height: auto !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    z-index: 40 !important;
+    display: flex !important;
+    gap: 12px !important;
+  }
+  body.xh-shell #xh-mid {
+    height: 100% !important;
+    flex: 0 0 clamp(380px, 26vw, 500px) !important;
+    width: clamp(380px, 26vw, 500px) !important;
+    min-width: 360px !important;
+    max-width: 500px !important;
+  }
+  body.xh-shell:not(.xh-preview-open) #xh-mid {
+    flex: 1 1 0 !important;
+    width: 100% !important;
+    max-width: none !important;
+  }
+  body.xh-shell #xh-right {
+    height: 100% !important;
+    flex: 1 1 0 !important;
+    min-width: 460px !important;
+    max-width: none !important;
+  }
+  body.xh-shell #xh-right-body {
+    height: calc(100% - 46px) !important;
+    flex: 1 !important;
+  }
+  body.xh-shell #xh-right-body iframe {
+    height: 100% !important;
+    min-height: 100% !important;
+  }
+}
+
+/* 手机端（<=700px）：抽屉式目录树 + 单栏列表 / 全屏预览 */
+@media (max-width: 700px) {
+  body.xh-shell { overflow-x: hidden; }
+  body.xh-shell .body { width: 100% !important; max-width: none !important; margin: 0 !important; padding: 0 8px 24px !important; }
+  body.xh-shell #xh-shell { display: block; width: 100%; height: auto; min-height: calc(100dvh - 100px); margin: 0; }
+  body.xh-shell #xh-mid { width: 100%; min-width: 0; max-width: none; border-radius: 12px; }
+  body.xh-shell #xh-crumb { font-size: 13px; padding: 10px 8px; }
+  body.xh-shell #xh-list-header { display: none; }
+  body.xh-shell .xhf-row { min-height: 46px; padding: 10px 8px; }
+  body.xh-shell .xhf-size { width: auto; max-width: 70px; font-size: 11px; }
+  body.xh-shell .xhf-time { display: none; }
+  body.xh-shell #xh-right { display: none !important; }
+  body.xh-shell.xh-preview-open #xh-mid { display: none !important; }
+  body.xh-shell.xh-preview-open #xh-right {
+    display: flex !important; position: fixed; inset: 58px 0 0;
+    width: 100vw; max-width: none; min-width: 0; height: calc(100dvh - 58px);
+    z-index: 100; border-radius: 14px 14px 0 0;
+  }
+  body.xh-shell #xh-tree {
+    top: 58px !important; bottom: 0 !important; width: min(82vw, 310px) !important;
+    z-index: 120 !important; transform: translateX(-110%) !important;
+    box-shadow: 8px 0 30px rgba(15, 23, 42, .16);
+  }
+  body.xh-shell.xh-treeopen #xh-tree { transform: translateX(0) !important; }
+  body.xh-shell.xh-treeopen:after { content: ''; position: fixed; inset: 58px 0 0; z-index: 110; background: rgba(15, 23, 42, .28); }
+  #xh-tree-resizer { display: none !important; }
+  body.xh-shell #xh-tree-toggle { display: block !important; }
+  body.xh-shell.xh-preview-open #xh-tree-toggle { display: none !important; }
+}
+
+/* Excel 交互表格样式 */
+.xh-excel-wrap { display: flex; flex-direction: column; height: 100%; width: 100%; overflow: hidden; background: #fff; }
+.xh-excel-tabs { display: flex; gap: 6px; padding: 6px 12px; background: #f8fafc; border-bottom: 1px solid var(--xh-line); overflow-x: auto; flex-shrink: 0; }
+.xh-excel-tab { padding: 4px 12px; font-size: 12px; border-radius: 6px; cursor: pointer; color: #475569; background: #fff; border: 1px solid #cbd5e1; white-space: nowrap; transition: all .12s; }
+.xh-excel-tab:hover { background: #eff6ff; color: #2563eb; }
+.xh-excel-tab.xh-tab-active { background: #2563eb; color: #fff; border-color: #2563eb; font-weight: 600; }
+.xh-excel-grid { flex: 1; overflow: auto; padding: 0; }
+.xh-excel-grid table { border-collapse: collapse; font-size: 12px; font-family: -apple-system, monospace; width: max-content; min-width: 100%; }
+.xh-excel-grid th, .xh-excel-grid td { border: 1px solid #e2e8f0; padding: 5px 8px; white-space: nowrap; max-width: 360px; overflow: hidden; text-overflow: ellipsis; }
+.xh-excel-grid tr:first-child td, .xh-excel-grid th { background: #f1f5f9; font-weight: 600; color: #334155; position: sticky; top: 0; z-index: 2; }
+.xh-excel-grid tr:hover td { background: #f8fafc; }
+
+/* 音频黑胶唱片卡片样式 */
+.xh-audio-card { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 30px; text-align: center; }
+.xh-audio-disc { width: 130px; height: 130px; border-radius: 50%; background: radial-gradient(circle, #0f172a 35%, #1e293b 70%, #0f172a 100%); display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 24px rgba(15,23,42,.25); margin-bottom: 18px; border: 3px solid #334155; animation: xh-spin 20s linear infinite; animation-play-state: paused; }
+.xh-audio-disc.xh-playing { animation-play-state: running; }
+@keyframes xh-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+.xh-audio-center { width: 38px; height: 38px; border-radius: 50%; background: #38bdf8; display: flex; align-items: center; justify-content: center; font-size: 16px; border: 2px solid #fff; }
+.xh-audio-title { font-size: 14.5px; font-weight: 600; color: #1e293b; max-width: 80%; overflow: hidden; text-overflow: ellipsis; margin-bottom: 4px; }
+.xh-audio-sub { font-size: 12px; color: #64748b; }
+
+/* 按钮样式 */
+.xh-primary-btn { display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: 8px; background: #2563eb; color: #fff; text-decoration: none; font-size: 12.5px; font-weight: 500; transition: background .12s; border: none; cursor: pointer; }
+.xh-primary-btn:hover { background: #1d4ed8; color: #fff; }
+.xh-sec-btn { display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: 8px; background: #f1f5f9; color: #334155; text-decoration: none; font-size: 12.5px; font-weight: 500; transition: background .12s; border: none; cursor: pointer; }
+.xh-sec-btn:hover { background: #e2e8f0; color: #0f172a; }
+
+/* 细微平滑滚动条 */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+::selection { background: #bfdbfe; }
+</style>
+
+<div id="xh-tree"></div>
+<div id="xh-tree-resizer" title="按住拖动调整目录宽度"></div>
+<button id="xh-tree-toggle" title="打开目录树">🌳</button>
+
+<script>
+/* ===== 目录树与三栏工作台核心逻辑 ===== */
+(function(){
+  if (window.__xhAppInit) return; window.__xhAppInit = 1;
+  var TOKEN = localStorage.getItem('token') || '';
+
+  /* ---- 宽度持久化与拖拽 ---- */
+  var treeW = 260;
+  try {
+    var savedW = parseInt(localStorage.getItem('xhTreeWidth'), 10);
+    if (savedW >= 180 && savedW <= 580) treeW = savedW;
+  } catch(e) {}
+  document.documentElement.style.setProperty('--xh-tree-w', treeW + 'px');
+
+  function initResizer() {
+    var bar = document.getElementById('xh-tree-resizer');
+    if (!bar || bar.__bound) return; bar.__bound = true;
+    bar.addEventListener('mousedown', function(e) {
+      if (e.button !== 0) return;
+      e.preventDefault();
+      document.body.classList.add('xh-resizing');
+      var onMove = function(ev) {
+        var nw = Math.max(180, Math.min(580, ev.clientX));
+        treeW = nw;
+        document.documentElement.style.setProperty('--xh-tree-w', nw + 'px');
+        widen();
+      };
+      var onUp = function() {
+        document.body.classList.remove('xh-resizing');
+        document.removeEventListener('mousemove', onMove);
+        document.removeEventListener('mouseup', onUp);
+        try { localStorage.setItem('xhTreeWidth', treeW); } catch(ex) {}
+      };
+      document.addEventListener('mousemove', onMove);
+      document.addEventListener('mouseup', onUp);
+    });
+  }
+
+  /* ---- 现代矢量图标库 ---- */
+  var ICONS = {
+    folder: '<svg width="18" height="18" viewBox="0 0 24 24" fill="#f59e0b"><path d="M20 6h-8l-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 12H4V8h16v10z"/></svg>',
+    pdf: '<svg width="18" height="18" viewBox="0 0 24 24" fill="#ef4444"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-1 2 5 5h-5V4zm-2.5 13H8.5v-5h2a1.5 1.5 0 0 1 0 3h-1v2h1zm3.5 0h-2v-5h2a1.5 1.5 0 0 1 1.5 1.5v2a1.5 1.5 0 0 1-1.5 1.5zm-3-3.5h.5a.5.5 0 0 0 0-1h-.5v1zm3 2.5h.5a.5.5 0 0 0 .5-.5v-2a.5.5 0 0 0-.5-.5h-.5v3z"/></svg>',
+    excel: '<svg width="18" height="18" viewBox="0 0 24 24" fill="#10b981"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-1 2 5 5h-5V4zM8 12h8v2H8v-2zm0 3h8v2H8v-2zm0-6h3v2H8V9z"/></svg>',
+    word: '<svg width="18" height="18" viewBox="0 0 24 24" fill="#2563eb"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-1 2 5 5h-5V4zM8 17l1.5-6h1.5l1.5 6H11l-.75-3.5h-1L8.5 17H8z"/></svg>',
+    zip: '<svg width="18" height="18" viewBox="0 0 24 24" fill="#8b5cf6"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-1 2 5 5h-5V4zm-3 8h2v2h-2v-2zm0-2h2v2h-2v-2zm0-2h2v2h-2V6zm0 6h2v2h-2v-2z"/></svg>',
+    code: '<svg width="18" height="18" viewBox="0 0 24 24" fill="#64748b"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-1 2 5 5h-5V4zm-5 8h8v1.5H8V12zm0 3h8v1.5H8V15zm0 3h5v1.5H8V18z"/></svg>',
+    image: '<svg width="18" height="18" viewBox="0 0 24 24" fill="#ec4899"><path d="M19 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2zm0 16H5l4.5-6 3.5 4.5 2.5-3 3.5 4.5z"/></svg>',
+    video: '<svg width="18" height="18" viewBox="0 0 24 24" fill="#f97316"><path d="M18 4l2 4h-3l-2-4h-2l2 4h-3l-2-4H8l2 4H7L5 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4h-4z"/></svg>',
+    audio: '<svg width="18" height="18" viewBox="0 0 24 24" fill="#06b6d4"><path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z"/></svg>',
+    book: '<svg width="18" height="18" viewBox="0 0 24 24" fill="#0284c7"><path d="M18 2H6c-1.2 0-2 .8-2 2v16c0 1.2.8 2 2 2h12c1.2 0 2-.8 2-2V4c0-1.2-.8-2-2-2zM6 4h5v8l-2.5-1.5L6 12V4z"/></svg>',
+    file: '<svg width="18" height="18" viewBox="0 0 24 24" fill="#94a3b8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-1 2 5 5h-5V4z"/></svg>'
+  };
+
+  function getIcon(name, isDir) {
+    if (isDir) return ICONS.folder;
+    var ext = (name.split('.').pop() || '').toLowerCase();
+    if (ext === 'pdf') return ICONS.pdf;
+    if (['xlsx','xls','csv'].indexOf(ext) > -1) return ICONS.excel;
+    if (['docx','doc'].indexOf(ext) > -1) return ICONS.word;
+    if (['zip','rar','7z','tar','gz'].indexOf(ext) > -1) return ICONS.zip;
+    if (['epub','mobi','azw3'].indexOf(ext) > -1) return ICONS.book;
+    if (['png','jpg','jpeg','gif','webp','bmp','svg','ico'].indexOf(ext) > -1) return ICONS.image;
+    if (['mp4','mkv','webm','mov','m4v'].indexOf(ext) > -1) return ICONS.video;
+    if (['mp3','flac','wav','m4a','aac','ogg'].indexOf(ext) > -1) return ICONS.audio;
+    if (['txt','md','json','xml','js','ts','py','html','css','sql','yaml','yml','ipynb'].indexOf(ext) > -1) return ICONS.code;
+    return ICONS.file;
+  }
+
+  /* ---- 目录树状态缓存 ---- */
+  var treeState = { loaded: {}, expanded: {'/': true}, loading: null };
+  try {
+    var raw = sessionStorage.getItem('xhTreeState');
+    if (raw) {
+      var parsed = JSON.parse(raw);
+      if (parsed && parsed.loaded) {
+        treeState.loaded = parsed.loaded;
+        treeState.expanded = parsed.expanded || {'/': true};
+        // 关键防御：如果缓存里的根目录是空的，立即清除重新拉取
+        if (treeState.loaded['/'] && treeState.loaded['/'].length === 0) {
+          delete treeState.loaded['/'];
+        }
+      }
+    }
+  } catch(e) {}
+  function saveTree() {
+    try { sessionStorage.setItem('xhTreeState', JSON.stringify({ loaded: treeState.loaded, expanded: treeState.expanded })); } catch(e) {}
+  }
+
+  function cur() { try { return decodeURIComponent(location.pathname); } catch(e) { return location.pathname; } }
+  function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+  function segments(p) { p = p.replace(/\/+$/, ''); return (p === '' || p === '/') ? [] : p.split('/').slice(1); }
+  function joinPath(b, n) { return b === '/' ? '/' + n : b + '/' + n; }
+  function baseName(p) { return p.replace(/\/+$/, '').split('/').pop(); }
+  function parentPath(p) { var i = p.replace(/\/+$/, '').lastIndexOf('/'); return i <= 0 ? '/' : p.slice(0, i); }
+  function fmtSize(b) { if (b == null || isNaN(b)) return '-'; var u = ['B','KB','MB','GB'], i = 0; while (b >= 1024 && i < 3) { b /= 1024; i++; } return b.toFixed(i ? 1 : 0) + ' ' + u[i]; }
+  function fmtTime(t) { return t ? t.slice(0, 16).replace('T', ' ') : '-'; }
+  function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+
+  /* ---- OpenList 后台 API ---- */
+  function getToken() {
+    try { return localStorage.getItem('token') || ''; } catch(e) { return ''; }
+  }
+
+  function api(path, data) {
+    var tk = getToken();
+    var headers = { 'Content-Type': 'application/json' };
+    if (tk) headers['Authorization'] = tk;
+    return fetch(path, {
+      method: 'POST',
+      headers: headers,
+      body: JSON.stringify(data || {})
+    }).then(function(r) { return r.json(); });
+  }
+
+  function getDirKids(path) {
+    if (treeState.loaded[path] && treeState.loaded[path].length > 0) {
+      return Promise.resolve(treeState.loaded[path]);
+    }
+    return api('/api/fs/list', { path: path, page: 1, per_page: 1000, refresh: false })
+      .then(function(j) {
+        if (!j || j.code !== 200 || !j.data || !j.data.content) throw new Error((j && j.message) || 'list failed');
+        var names = j.data.content.filter(function(c) { return c.is_dir; }).map(function(c) { return c.name; });
+        treeState.loaded[path] = names;
+        saveTree();
+        return names;
+      }).catch(function() {
+        delete treeState.loaded[path];
+        return [];
+      });
+  }
+
+  function ensurePath(p) {
+    var path = '/', pr = getDirKids('/');
+    var segs = segments(p);
+    segs.forEach(function(s) {
+      var target = joinPath(path, s);
+      path = target;
+      pr = pr.then(function() {
+        treeState.expanded[target] = true;
+        return getDirKids(target);
+      });
+    });
+    return pr.then(function() { saveTree(); return null; });
+  }
+
+  /* ---- 目录树渲染 ---- */
+  function buildTreeNode(full, name, curp) {
+    var node = el('div', 'xh-node');
+    var row = el('div', 'xh-row' + (curp === full ? ' xh-active' : ''));
+    var arrow = el('span', 'xh-arrow', '▸');
+    if (treeState.loaded[full] && treeState.loaded[full].length === 0) arrow.classList.add('xh-placeholder');
+    else if (treeState.expanded[full]) arrow.classList.add('xh-open');
+    arrow.onclick = function(e) { e.stopPropagation(); toggleTree(full); };
+    row.appendChild(arrow);
+    var icon = el('span', 'xh-tree-icon'); icon.innerHTML = ICONS.folder; row.appendChild(icon);
+    var label = el('span', 'xh-node-title', name); row.appendChild(label);
+    row.title = name;
+    row.onclick = function() { navTo(full); };
+    node.appendChild(row);
+    if (treeState.expanded[full] && treeState.loaded[full]) {
+      var wrap = el('div', 'xh-kids xh-show');
+      var names = (treeState.loaded[full] || []).slice().sort(function(a,b){ return a.localeCompare(b,'zh'); });
+      names.forEach(function(n) { wrap.appendChild(buildTreeNode(joinPath(full, n), n, curp)); });
+      node.appendChild(wrap);
+    }
+    return node;
+  }
+
+  function toggleTree(path) {
+    if (!treeState.loaded[path]) {
+      treeState.loading = path; renderTree();
+      getDirKids(path).then(function() {
+        treeState.expanded[path] = true;
+        treeState.loading = null;
+        saveTree(); renderTree();
+      });
+    } else {
+      treeState.expanded[path] = !treeState.expanded[path];
+      saveTree(); renderTree();
+    }
+  }
+
+  function renderTree() {
+    var box = document.getElementById('xh-tree');
+    if (!box) return;
+    box.innerHTML = '';
+    var body = el('div'); body.id = 'xh-tree-body';
+    body.appendChild(el('div', 'xh-tree-head', '目录导航'));
+    if (treeState.loading) body.appendChild(el('div', 'xh-loading', '加载中…'));
+    var wrap = el('div', 'xh-kids xh-show');
+    var names = (treeState.loaded['/'] || []).slice().sort(function(a,b){ return a.localeCompare(b,'zh'); });
+    names.forEach(function(n) { wrap.appendChild(buildTreeNode(joinPath('/', n), n, cur())); });
+    body.appendChild(wrap);
+    box.appendChild(body);
+
+    var footer = el('div'); footer.id = 'xh-tree-footer';
+    var link = el('a', 'xh-tree-footer-link'); link.href = '/@manage'; link.title = '进入管理后台';
+    link.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg><span>后台管理</span>';
+    footer.appendChild(link);
+    box.appendChild(footer);
+  }
+
+  /* ---- 三栏工作台数据与渲染 ---- */
+  var shellState = { sel: null, listCache: {} };
+
+  function ensureShellDom() {
+    var body = document.querySelector('.body');
+    if (!body) return false;
+    var shell = document.getElementById('xh-shell');
+    if (!shell) {
+      shell = document.createElement('div');
+      shell.id = 'xh-shell';
+      shell.innerHTML = 
+        '<div id="xh-mid">' +
+          '<div id="xh-crumb"></div>' +
+          '<div id="xh-anno" style="display:none">' +
+            '<span id="xh-anno-icon">📢</span>' +
+            '<div id="xh-anno-text"></div>' +
+            '<button id="xh-anno-close" title="不再显示">✕</button>' +
+          '</div>' +
+          '<div id="xh-list-header">' +
+            '<span class="xhh-name">名称</span>' +
+            '<span class="xhh-size">大小</span>' +
+            '<span class="xhh-time">修改时间</span>' +
+          '</div>' +
+          '<div id="xh-list"></div>' +
+        '</div>';
+      body.appendChild(shell);
+      document.body.classList.add('xh-shell');
+    }
+    return true;
+  }
+
+  function renderCrumb(path) {
+    var c = document.getElementById('xh-crumb');
+    if (!c) return;
+    var segs = path.replace(/\/+$/, '').split('/').slice(1).filter(Boolean);
+    var html = '<span class="xc-a" data-p="/">❄️ 首页</span>';
+    var acc = '';
+    segs.forEach(function(s, idx) {
+      acc += '/' + s;
+      if (idx === segs.length - 1) {
+        html += ' / <span style="color:#0f172a;font-weight:600">' + esc(s) + '</span>';
+      } else {
+        html += ' / <span class="xc-a" data-p="' + esc(acc) + '">' + esc(s) + '</span>';
+      }
+    });
+    c.innerHTML = html;
+    [].forEach.call(c.querySelectorAll('.xc-a'), function(a) {
+      a.onclick = function() { navTo(a.getAttribute('data-p')); };
+    });
+  }
+
+  function renderList(path, items, sel) {
+    var l = document.getElementById('xh-list');
+    if (!l) return;
+    l.innerHTML = '';
+    if (!items.length) {
+      l.innerHTML = '<div style="color:#9ca3af;font-size:13px;padding:30px 14px;text-align:center">此文件夹为空</div>';
+      return;
+    }
+    items.forEach(function(it) {
+      var full = (path === '/' ? '' : path) + '/' + it.name;
+      var row = document.createElement('div');
+      row.className = 'xhf-row' + (sel === full ? ' xh-sel' : '');
+      row.innerHTML = 
+        '<span class="xhf-icon">' + getIcon(it.name, it.is_dir) + '</span>' +
+        '<span class="xhf-name">' + esc(it.name) + '</span>' +
+        '<span class="xhf-size">' + (it.is_dir ? '-' : fmtSize(it.size)) + '</span>' +
+        '<span class="xhf-time">' + fmtTime(it.modified) + '</span>';
+      row.title = it.name;
+      row.onclick = function() {
+        if (it.is_dir) {
+          navTo(full);
+        } else {
+          shellState.sel = full;
+          renderList(path, items, full);
+          renderPreview(full);
+        }
+      };
+      l.appendChild(row);
+    });
+  }
+
+  function closePreview() {
+    shellState.sel = null;
+    document.body.classList.remove('xh-preview-open');
+    var p = document.getElementById('xh-right');
+    if (p) p.remove();
+    widen();
+  }
+
+  /* ---- Markdown 轻量解析与导读说明渲染 ---- */
+  function renderMarkdown(md) {
+    if (!md) return '';
+    var lines = md.split('\n');
+    var html = [];
+    var inList = false;
+    lines.forEach(function(line) {
+      var trimmed = line.trim();
+      if (!trimmed) {
+        if (inList) { html.push('</ul>'); inList = false; }
+        return;
+      }
+      if (/^### (.*)/.test(line)) {
+        if (inList) { html.push('</ul>'); inList = false; }
+        html.push('<h3 class="xh-md-h3">' + esc(line.replace(/^### /, '')) + '</h3>');
+      } else if (/^## (.*)/.test(line)) {
+        if (inList) { html.push('</ul>'); inList = false; }
+        html.push('<h2 class="xh-md-h2">' + esc(line.replace(/^## /, '')) + '</h2>');
+      } else if (/^# (.*)/.test(line)) {
+        if (inList) { html.push('</ul>'); inList = false; }
+        html.push('<h1 class="xh-md-h1">' + esc(line.replace(/^# /, '')) + '</h1>');
+      } else if (/^> (.*)/.test(line)) {
+        if (inList) { html.push('</ul>'); inList = false; }
+        html.push('<blockquote class="xh-md-quote">' + esc(line.replace(/^> /, '')) + '</blockquote>');
+      } else if (/^- (.*)/.test(line)) {
+        if (!inList) { html.push('<ul class="xh-md-ul">'); inList = true; }
+        var itemText = esc(line.replace(/^- /, '')).replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+        html.push('<li>' + itemText + '</li>');
+      } else {
+        if (inList) { html.push('</ul>'); inList = false; }
+        var pText = esc(line).replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+        html.push('<p class="xh-md-p">' + pText + '</p>');
+      }
+    });
+    if (inList) html.push('</ul>');
+    return html.join('');
+  }
+
+  function renderReadmePreview(title, mdText) {
+    var shell = document.getElementById('xh-shell');
+    if (!shell) return;
+    var old = document.getElementById('xh-right');
+    if (old) old.remove();
+    document.body.classList.add('xh-preview-open');
+
+    var pane = document.createElement('div');
+    pane.id = 'xh-right';
+    pane.innerHTML = 
+      '<div id="xh-right-head">' +
+        '<div id="xh-right-title">📋 ' + esc(title || '目录导读说明') + '</div>' +
+        '<div id="xh-right-size">目录导读</div>' +
+        '<div class="xh-head-actions">' +
+          '<button id="xh-right-close" class="xh-btn-icon xh-btn-close" title="收起导读">✕</button>' +
+        '</div>' +
+      '</div>' +
+      '<div id="xh-right-body"><div class="xh-readme-wrap">' + renderMarkdown(mdText) + '</div></div>';
+    shell.appendChild(pane);
+    widen();
+    pane.querySelector('#xh-right-close').onclick = closePreview;
+  }
+
+  function loadSheetJS() {
+    if (window.XLSX) return Promise.resolve(window.XLSX);
+    return new Promise(function(resolve, reject) {
+      var s = document.createElement('script');
+      s.src = '/pdfjs/xlsx.full.min.js';
+      s.onload = function() { resolve(window.XLSX); };
+      s.onerror = reject;
+      document.head.appendChild(s);
+    });
+  }
+
+  function renderPreview(path) {
+    var shell = document.getElementById('xh-shell');
+    if (!shell) return;
+    var old = document.getElementById('xh-right');
+    if (old) old.remove();
+    document.body.classList.add('xh-preview-open');
+
+    var pane = document.createElement('div');
+    pane.id = 'xh-right';
+    pane.innerHTML = 
+      '<div id="xh-right-head">' +
+        '<div id="xh-right-title">' + esc(baseName(path)) + '</div>' +
+        '<div id="xh-right-size">计算中…</div>' +
+        '<div class="xh-head-actions">' +
+          '<a id="xh-act-down" class="xh-btn-icon" title="下载文件" href="#" download>' +
+            '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>' +
+          '</a>' +
+          '<button id="xh-right-close" class="xh-btn-icon xh-btn-close" title="关闭预览">' +
+            '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>' +
+          '</button>' +
+        '</div>' +
+      '</div>' +
+      '<div id="xh-right-body"><div class="xh-pv-fallback">加载中…</div></div>';
+    shell.appendChild(pane);
+    widen();
+
+    pane.querySelector('#xh-right-close').onclick = closePreview;
+
+    api('/api/fs/get', { path: path }).then(function(j) {
+      if (!j || j.code !== 200 || !j.data) throw new Error(j.message || 'get failed');
+      var d = j.data;
+      var sizeEl = pane.querySelector('#xh-right-size');
+      var body = pane.querySelector('#xh-right-body');
+      var downBtn = pane.querySelector('#xh-act-down');
+
+      if (sizeEl) sizeEl.textContent = fmtSize(d.size);
+      var url = d.raw_url || (location.origin + '/p' + encodeURI(path));
+      if (d.sign && url.indexOf('sign=') === -1) url += (url.indexOf('?') > -1 ? '&' : '?') + 'sign=' + d.sign;
+
+      var downUrl = location.origin + '/d' + encodeURI(path) + (d.sign ? '?sign=' + d.sign : '');
+      if (downBtn) { downBtn.href = downUrl; downBtn.download = baseName(path); }
+
+      var extName = (baseName(path).split('.').pop() || '').toLowerCase();
+      body.innerHTML = '';
+      if (extName === 'pdf') {
+        body.innerHTML = '<iframe src="/pdfjs/web/viewer.html?file=' + encodeURIComponent(url) + '&rv=7#zoom=page-width"></iframe>';
+      } else if (['xlsx','xls','csv'].indexOf(extName) > -1) {
+        body.innerHTML = '<div class="xh-pv-fallback"><div>正在解析 Excel 表格数据…</div></div>';
+        loadSheetJS().then(function(XLSX) {
+          return fetch(url).then(function(r){
+            if (!r.ok) throw new Error('网络请求状态: ' + r.status);
+            return r.arrayBuffer();
+          }).then(function(buf) {
+            var wb = XLSX.read(buf, { type: 'array', cellDates: true });
+            if (!wb.SheetNames || !wb.SheetNames.length) throw new Error('工作簿为空');
+            var wrap = document.createElement('div'); wrap.className = 'xh-excel-wrap';
+            var tabs = document.createElement('div'); tabs.className = 'xh-excel-tabs';
+            var grid = document.createElement('div'); grid.className = 'xh-excel-grid';
+
+            function showSheet(sname, activeBtn) {
+              [].forEach.call(tabs.querySelectorAll('.xh-excel-tab'), function(b){ b.classList.remove('xh-tab-active'); });
+              if (activeBtn) activeBtn.classList.add('xh-tab-active');
+              var ws = wb.Sheets[sname];
+              grid.innerHTML = XLSX.utils.sheet_to_html(ws, { header: '', footer: '' });
+            }
+
+            wb.SheetNames.forEach(function(sname, idx) {
+              var btn = document.createElement('button');
+              btn.className = 'xh-excel-tab' + (idx === 0 ? ' xh-tab-active' : '');
+              btn.textContent = sname;
+              btn.onclick = function() { showSheet(sname, btn); };
+              tabs.appendChild(btn);
+            });
+
+            wrap.appendChild(tabs);
+            wrap.appendChild(grid);
+            body.innerHTML = '';
+            body.appendChild(wrap);
+            showSheet(wb.SheetNames[0], tabs.firstChild);
+          });
+        }).catch(function(err) {
+          body.innerHTML = 
+            '<div class="xh-pv-fallback">' +
+              '<div style="transform:scale(1.8);margin-bottom:8px">' + ICONS.excel + '</div>' +
+              '<div style="font-size:14px;font-weight:600;color:#1e293b">表格解析异常：' + esc(err.message) + '</div>' +
+              '<div style="font-size:12.5px;color:#64748b;margin-top:4px">文件较大或受保护，建议直接下载在 Excel 中打开</div>' +
+              '<a href="' + esc(url) + '" download class="xh-primary-btn" style="margin-top:12px">⬇ 下载原表格文件</a>' +
+            '</div>';
+        });
+      } else if (['mp3','flac','wav','m4a','aac','ogg'].indexOf(extName) > -1) {
+        body.innerHTML = 
+          '<div class="xh-audio-card">' +
+            '<div class="xh-audio-disc" id="xh-disc">' +
+              '<div class="xh-audio-center">❄️</div>' +
+            '</div>' +
+            '<div class="xh-audio-title" title="' + esc(baseName(path)) + '">' + esc(baseName(path)) + '</div>' +
+            '<div class="xh-audio-sub">音频录音 · ' + fmtSize(d.size) + '</div>' +
+            '<audio id="xh-audio-player" src="' + esc(url) + '" controls style="width:85%;max-width:440px;margin-top:16px"></audio>' +
+          '</div>';
+        var aud = body.querySelector('#xh-audio-player');
+        var disc = body.querySelector('#xh-disc');
+        if (aud && disc) {
+          aud.onplay = function() { disc.classList.add('xh-playing'); };
+          aud.onpause = function() { disc.classList.remove('xh-playing'); };
+        }
+      } else if (['mp4','mkv','webm','mov','m4v'].indexOf(extName) > -1) {
+        body.innerHTML = 
+          '<div style="flex:1;display:flex;align-items:center;justify-content:center;background:#000;padding:12px">' +
+            '<video src="' + esc(url) + '" controls autoplay style="max-width:100%;max-height:100%;border-radius:8px;outline:none"></video>' +
+          '</div>';
+      } else if (['png','jpg','jpeg','gif','webp','bmp','svg','ico'].indexOf(extName) > -1) {
+        body.innerHTML = 
+          '<div style="flex:1;display:flex;align-items:center;justify-content:center;padding:16px;overflow:auto;background:radial-gradient(#e2e8f0 1px, transparent 1px);background-size:16px 16px">' +
+            '<img src="' + esc(url) + '" alt="' + esc(baseName(path)) + '" style="max-width:100%;max-height:100%;object-fit:contain;border-radius:8px;box-shadow:0 4px 20px rgba(0,0,0,0.08)">' +
+          '</div>';
+      } else if (['doc','docx','ppt','pptx'].indexOf(extName) > -1) {
+        var msUrl = 'https://view.officeapps.live.com/op/view.aspx?src=' + encodeURIComponent(url);
+        body.innerHTML = '<iframe src="' + esc(msUrl) + '" style="width:100%;height:100%;border:0;flex:1;"></iframe>';
+      } else if (['txt','md','json','xml','js','ts','py','html','css','sql','yaml','yml','ipynb'].indexOf(extName) > -1) {
+        body.innerHTML = '<div class="xh-pv-fallback">正在加载文本内容…</div>';
+        fetch(url).then(function(r){ return r.text(); }).then(function(t) {
+          body.innerHTML = '<pre>' + esc(t.slice(0, 1500000)) + '</pre>';
+        }).catch(function() { body.innerHTML = '<div class="xh-pv-fallback">文本加载失败</div>'; });
+      } else {
+        var iconHtml = getIcon(baseName(path), false);
+        body.innerHTML = 
+          '<div class="xh-pv-fallback">' +
+            '<div style="transform:scale(2.2);margin-bottom:12px">' + iconHtml + '</div>' +
+            '<div style="font-size:15px;font-weight:600;color:#1e293b">' + esc(baseName(path)) + '</div>' +
+            '<div style="font-size:12.5px;color:#64748b">文件大小：' + fmtSize(d.size) + ' · 格式：.' + esc(extName) + '</div>' +
+            '<div style="font-size:13px;color:#94a3b8;margin-top:4px">此格式不支持浏览器内联渲染，建议下载原文件使用专业应用打开</div>' +
+            '<div style="margin-top:14px">' +
+              '<a href="' + esc(downUrl) + '" download class="xh-primary-btn">⬇ 下载文件 (' + fmtSize(d.size) + ')</a>' +
+            '</div>' +
+          '</div>';
+      }
+    }).catch(function(e) {
+      var body = pane.querySelector('#xh-right-body');
+      if (body) body.innerHTML = '<div class="xh-pv-fallback">加载失败：' + esc(e.message) + '</div>';
+    });
+  }
+
+  /* ---- 导航与路由驱动 ---- */
+  var renderSeq = 0, pubSettingsCache = null;
+  function getPubSettings() {
+    if (pubSettingsCache) return Promise.resolve(pubSettingsCache);
+    return fetch('/api/public/settings').then(function(r){ return r.json(); }).then(function(j){
+      pubSettingsCache = (j && j.data) || {};
+      return pubSettingsCache;
+    }).catch(function(){ return {}; });
+  }
+
+  function renderAll() {
+    if (!ensureShellDom()) return;
+    initResizer();
+    var seq = ++renderSeq;
+    var p = cur();
+    if (p.indexOf('/@') === 0) {
+      document.body.classList.remove('xh-shell');
+      return;
+    }
+    document.body.classList.add('xh-shell');
+    if (window.matchMedia('(max-width:700px)').matches) {
+      document.body.classList.remove('xh-treeopen');
+    }
+
+    renderTree();
+    ensurePath(p).then(renderTree);
+
+    getPubSettings().then(function(pub) {
+      var annoEl = document.getElementById('xh-anno');
+      if (annoEl) {
+        var txt = (pub.announcement || '').trim();
+        var hide = sessionStorage.getItem('xhHideAnno') === '1';
+        if (txt && !hide) {
+          annoEl.style.display = 'flex';
+          annoEl.querySelector('#xh-anno-text').textContent = txt;
+          annoEl.querySelector('#xh-anno-close').onclick = function() {
+            annoEl.style.display = 'none';
+            sessionStorage.setItem('xhHideAnno', '1');
+          };
+        } else {
+          annoEl.style.display = 'none';
+        }
+      }
+      var footEl = document.getElementById('xh-footer-text');
+      if (footEl && pub.footer_text && pub.footer_text.trim()) {
+        footEl.textContent = pub.footer_text.trim();
+      }
+    });
+
+    api('/api/fs/get', { path: p }).then(function(j) {
+      if (seq !== renderSeq) return;
+      var d = j && j.data;
+      var isDir = !d || d.is_dir !== false;
+      var mid = isDir ? p : parentPath(p);
+      renderCrumb(mid);
+      if (shellState.listCache[mid]) {
+        renderList(mid, shellState.listCache[mid], shellState.sel);
+      }
+      return api('/api/fs/list', { path: mid, page: 1, per_page: 1000, refresh: false }).then(function(lj) {
+        if (seq !== renderSeq) return;
+        var items = (lj && lj.data && lj.data.content || []).slice().sort(function(a,b){
+          if (a.is_dir !== b.is_dir) return a.is_dir ? -1 : 1;
+          return a.name.localeCompare(b.name, 'zh');
+        });
+        shellState.listCache[mid] = items;
+        if (mid === '/' && items.length === 1 && items[0].name === '雪人投研' && items[0].is_dir) {
+          navTo('/雪人投研');
+          return;
+        }
+        renderList(mid, items, shellState.sel);
+        var rm = (lj && lj.data && lj.data.readme) || '';
+        if (!isDir && shellState.sel !== p) {
+          shellState.sel = p;
+          renderPreview(p);
+        } else if (isDir && rm && rm.trim() && !shellState.sel) {
+          renderReadmePreview(baseName(mid) + ' · 导读说明', rm.trim());
+        } else if (isDir && !shellState.sel) {
+          closePreview();
+        }
+      });
+    }).catch(function(e) {
+      var l = document.getElementById('xh-list');
+      if (l && seq === renderSeq) l.innerHTML = '<div style="color:#9ca3af;font-size:13px;padding:30px 14px;text-align:center">加载失败：' + esc(e.message) + '</div>';
+    });
+  }
+
+  function navTo(path) {
+    if (cur() !== path) {
+      try { history.pushState(null, '', encodeURI(path)); } catch(e) {}
+      lastPath = location.pathname;
+    }
+    renderAll();
+  }
+  window.addEventListener('popstate', function() {
+    lastPath = location.pathname;
+    setTimeout(renderAll, 50);
+  });
+
+  /* ---- 布局自适应 widen ---- */
+  function widen() {
+    var b = document.querySelector('.body');
+    if (!b) return;
+    var wrap = b.parentElement;
+    if (!document.body.classList.contains('xh-shell') || cur().indexOf('/@') === 0) {
+      if (wrap && wrap !== document.body) {
+        try {
+          wrap.style.removeProperty('width');
+          wrap.style.removeProperty('max-width');
+          wrap.style.removeProperty('margin-left');
+          wrap.style.removeProperty('margin-right');
+          wrap.style.removeProperty('box-sizing');
+        } catch(x) {}
+      }
+      try {
+        b.style.removeProperty('width');
+        b.style.removeProperty('max-width');
+        b.style.removeProperty('margin');
+      } catch(x) {}
+      return;
+    }
+    if (wrap && wrap !== document.body) {
+      try {
+        wrap.style.setProperty('max-width', 'none', 'important');
+        if (window.matchMedia('(min-width:1001px)').matches) {
+          wrap.style.setProperty('width', 'calc(100vw - var(--xh-tree-w, 260px))', 'important');
+          wrap.style.setProperty('margin-left', 'var(--xh-tree-w, 260px)', 'important');
+          wrap.style.setProperty('margin-right', '0', 'important');
+          wrap.style.setProperty('box-sizing', 'border-box', 'important');
+          b.style.setProperty('width', '100%', 'important');
+          b.style.setProperty('max-width', 'none', 'important');
+          b.style.setProperty('margin', '0', 'important');
+        } else if (window.matchMedia('(max-width:700px)').matches) {
+          wrap.style.setProperty('width', '100%', 'important');
+          wrap.style.setProperty('margin-left', '0', 'important');
+          wrap.style.setProperty('margin-right', '0', 'important');
+          b.style.setProperty('width', '100%', 'important');
+          b.style.setProperty('max-width', 'none', 'important');
+          b.style.setProperty('margin', '0', 'important');
+        }
+      } catch(x) {}
+    }
+  }
+
+  /* ---- 顶栏毛玻璃与渐变品牌标题 ---- */
+  function polishHeader() {
+    var hl = document.querySelector('.header-left');
+    if (hl) {
+      var bar = hl;
+      for (var i = 0; i < 3 && bar.parentElement; i++) { bar = bar.parentElement; }
+      if (!bar.classList.contains('xh-header')) bar.classList.add('xh-header');
+      if (!document.getElementById('xh-sitename')) {
+        var s = document.createElement('span');
+        s.id = 'xh-sitename';
+        s.className = 'xh-sitename';
+        s.textContent = '雪人投研';
+        hl.appendChild(s);
+      }
+    }
+    var a = document.querySelector('a[href*="OpenListTeam"]');
+    if (a) {
+      var p = a.parentElement;
+      while (p && p.textContent.length > 60) p = p.parentElement;
+      if (p && !p.classList.contains('xh-footer')) p.classList.add('xh-footer');
+    }
+  }
+
+  /* ---- 初始化与路由监听 ---- */
+  var appStarted = false, lastPath = null;
+  function start() {
+    if (appStarted || !document.body || !document.querySelector('.body')) return;
+    var tog = document.getElementById('xh-tree-toggle');
+    if (tog && !tog.onclick) {
+      tog.onclick = function() { document.body.classList.toggle('xh-treeopen'); };
+    }
+    appStarted = true;
+    lastPath = location.pathname;
+    polishHeader();
+    widen();
+    renderAll();
+  }
+
+  setInterval(function() {
+    try {
+      start();
+      polishHeader();
+      widen();
+      initResizer();
+      if (!appStarted || cur().indexOf('/@') === 0) return;
+      if (location.pathname !== lastPath) {
+        lastPath = location.pathname;
+        renderAll();
+      }
+    } catch(e) {}
+  }, 900);
+
+  try { start(); } catch(e) {}
+})();
+</script>
