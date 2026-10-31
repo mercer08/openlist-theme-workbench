@@ -1,6 +1,6 @@
 <meta charset="utf-8">
 <style>
-/* ===== 雪人投研 · ZFile 现代工作台主题 ===== */
+/* ===== OpenList · 工作台主题 ===== */
 :root {
   --xh-tree-w: 260px;
   --xh-primary: #2563eb;
@@ -754,7 +754,7 @@ body.xh-shell .left-toolbar-box { display: none !important; }
     return new Promise(function(resolve, reject) {
       var s = document.createElement('script');
       s.src = '/pdfjs/xlsx.full.min.js';
-      s.onload = function() { resolve(window.XLSX); };
+      s.onload = function() { window.XLSX ? resolve(window.XLSX) : reject(new Error('XLSX 组件未加载')); };
       s.onerror = reject;
       document.head.appendChild(s);
     });
@@ -805,7 +805,8 @@ body.xh-shell .left-toolbar-box { display: none !important; }
       var extName = (baseName(path).split('.').pop() || '').toLowerCase();
       body.innerHTML = '';
       if (extName === 'pdf') {
-        body.innerHTML = '<iframe src="/pdfjs/web/viewer.html?file=' + encodeURIComponent(url) + '&rv=7#zoom=page-width"></iframe>';
+        // 使用浏览器内置 PDF 阅读器（本机未部署 /pdfjs 静态资源，避免 iframe 递归加载整站）
+        body.innerHTML = '<iframe src="' + esc(url) + '" style="width:100%;height:100%;border:0;flex:1;"></iframe>';
       } else if (['xlsx','xls','csv'].indexOf(extName) > -1) {
         body.innerHTML = '<div class="xh-pv-fallback"><div>正在解析 Excel 表格数据…</div></div>';
         loadSheetJS().then(function(XLSX) {
@@ -967,10 +968,6 @@ body.xh-shell .left-toolbar-box { display: none !important; }
           return a.name.localeCompare(b.name, 'zh');
         });
         shellState.listCache[mid] = items;
-        if (mid === '/' && items.length === 1 && items[0].name === '雪人投研' && items[0].is_dir) {
-          navTo('/雪人投研');
-          return;
-        }
         renderList(mid, items, shellState.sel);
         var rm = (lj && lj.data && lj.data.readme) || '';
         if (!isDir && shellState.sel !== p) {
@@ -1056,7 +1053,7 @@ body.xh-shell .left-toolbar-box { display: none !important; }
         var s = document.createElement('span');
         s.id = 'xh-sitename';
         s.className = 'xh-sitename';
-        s.textContent = '雪人投研';
+        s.textContent = 'OpenList';
         hl.appendChild(s);
       }
     }

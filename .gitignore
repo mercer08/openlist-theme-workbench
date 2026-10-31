@@ -1,0 +1,9 @@
+# 系统文件
+.DS_Store
+Thumbs.db
+
+# 部署/调试产生的临时文件
+*.bak
+*.orig
+*.rej
+openlist-customize_head-*.html

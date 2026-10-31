@@ -16,6 +16,9 @@
   <img src="https://img.shields.io/badge/Deploy-Zero--Intrusion-orange.svg" alt="Zero-Intrusion">
 </p>
 
+> **本仓库是 fork**：衍生自 [Nickszy/openlist-theme-workbench](https://github.com/Nickszy/openlist-theme-workbench)，在上游基础上做了少量本地化改造（品牌名、PDF 预览回退、Excel 加载校验），差异与升级方式见 [FORK.md](FORK.md)。
+> 原始设计与实现的版权归上游作者所有，同样以 MIT 许可发布。
+
 ---
 
 ## 💡 为什么要做这个皮肤？（设计思考与痛点）
@@ -167,6 +170,18 @@ location = /pdfjs/web/viewer.html {
 
 **A**: 非常简单，直接进入管理后台清空「自定义头部」并保存，界面立刻 100% 无残留恢复为 OpenList 原生外观。
 </details>
+
+---
+
+## 🔐 安全说明
+
+本主题的实现方式是**把一整段 HTML / CSS / JS 注入 OpenList 的 `customize_head`（自定义头部）**，因此请把它当作「上线一段代码」，而不是「换一个皮肤」：
+
+- 脚本以**当前登录用户**的身份、在同源下调用 `/api/*`，并可读取 `localStorage.token`；在管理员会话中，这等同于管理员权限。
+- Office 文档预览分支会把**带签名的文件直链**发送给 `view.officeapps.live.com`；不需要该功能时，建议删掉该分支或改为直接下载。
+- 没有内置 CSP / SRI，注入的脚本不受内容安全策略约束。公网站点建议在反向代理层加 CSP，把 `frame-src`、`connect-src` 限制为 `'self'`。
+- **不要直接跟随上游 `main` 自动升级**：升级前先 diff 新增的网络请求、动态脚本与 token 读取（方法见 [FORK.md](FORK.md)）。
+- 日常浏览建议使用非管理员账号，把 `admin` 会话留给管理操作。
 
 ---
 
