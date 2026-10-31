@@ -12,6 +12,14 @@
 4. Excel 组件加载增加 `window.XLSX` 校验，避免把 SPA 返回的 HTML 当脚本执行
 5. 移除 Word / PPT 的 `view.officeapps.live.com` 在线预览（不再把签名直链发给第三方），改为本地下载
 
+## 新增功能（相对上游）
+
+- **排序**：点击表头「名称 / 大小 / 修改时间」在升序、降序间切换；文件夹始终置顶；偏好存入 `localStorage.xhSort`。
+- **文件管理**：新建文件夹、上传（`PUT /api/fs/put`，支持多选顺序上传）、重命名、删除、下载；行内悬停出现操作按钮。
+- **离线下载**：调用 `POST /api/fs/add_offline_download`，工具列表取自 `/api/public/offline_download_tools?path=<当前目录>`；115 存储会以原生 `115 Open` 工具直接落到当前目录。
+- **任务面板**：`/api/task/offline_download/{undone,done}`，展示进度、取消任务，打开时每 4 秒刷新。
+- 所有请求均为同源 `/api/*`，没有新增外链；未登录时工具栏自动隐藏。
+
 ## 部署方式
 
 后台 → 设置 → 全局 → 自定义头部，粘贴 `dist/workbench.html` 全文。
@@ -32,7 +40,7 @@ curl -s https://openlist.example.com/ | grep -c xh-tree
 
 ## 当前线上版本
 
-- sha256 `ab1767bf619be24dc083236366fb40304f15819b52a9c3686b1b623dae780a59`
+- sha256 `3355b5453294e15fa84f061f62f67af07c2ef5f151fafd02d68387d668f1021a`
 - 旧值备份：`scripts/deploy.sh` 每次会写入 `/tmp/openlist-customize_head-<时间>.html`
 
 ## 回滚

@@ -385,6 +385,122 @@ body.xh-shell .left-toolbar-box { display: none !important; }
 .xh-sec-btn { display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: 8px; background: #f1f5f9; color: #334155; text-decoration: none; font-size: 12.5px; font-weight: 500; transition: background .12s; border: none; cursor: pointer; }
 .xh-sec-btn:hover { background: #e2e8f0; color: #0f172a; }
 
+/* ===== 文件管理工具栏 ===== */
+#xh-tools {
+  display: flex; align-items: center; gap: 6px; padding: 6px 10px;
+  border-bottom: 1px solid var(--xh-line); background: #fafbfc;
+  flex-shrink: 0; overflow-x: auto;
+}
+.xh-tool-btn {
+  display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px;
+  border: 1px solid transparent; border-radius: 7px; background: transparent;
+  color: #475569; font-size: 12.5px; cursor: pointer; white-space: nowrap;
+  transition: background .12s, color .12s;
+}
+.xh-tool-btn:hover { background: #eff6ff; color: #2563eb; }
+.xh-tool-btn:active { background: #dbeafe; }
+
+/* 可排序表头 */
+#xh-list-header [data-sort] { cursor: pointer; user-select: none; }
+#xh-list-header [data-sort]:hover { color: #2563eb; }
+.xhh-arrow { margin-left: 3px; font-size: 10px; opacity: .45; }
+#xh-list-header .xh-sort-active { color: #2563eb; }
+#xh-list-header .xh-sort-active .xhh-arrow { opacity: 1; }
+
+/* 行内操作按钮 */
+.xhf-actions {
+  flex: none; display: flex; gap: 2px; width: 0; overflow: hidden; opacity: 0;
+  transition: opacity .12s, width .12s;
+}
+.xhf-row:hover .xhf-actions, .xhf-row.xh-sel .xhf-actions { opacity: 1; width: 84px; }
+.xhf-act {
+  width: 26px; height: 26px; border: none; border-radius: 6px; background: transparent;
+  color: #64748b; font-size: 13px; cursor: pointer; line-height: 1;
+}
+.xhf-act:hover { background: #e2e8f0; color: #0f172a; }
+.xhf-act[data-act="delete"]:hover { background: #fee2e2; color: #dc2626; }
+
+/* 弹窗 */
+.xh-modal-mask {
+  position: fixed; inset: 0; z-index: 9999; padding: 20px;
+  background: rgba(15,23,42,.45); display: flex; align-items: center; justify-content: center;
+}
+.xh-modal {
+  width: min(460px, 100%); max-height: 86vh; display: flex; flex-direction: column;
+  background: #fff; border-radius: 14px; overflow: hidden;
+  box-shadow: 0 20px 50px rgba(15,23,42,.28);
+}
+.xh-modal-wide { width: min(640px, 100%); }
+.xh-modal-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 13px 16px; font-size: 14.5px; font-weight: 600; color: #0f172a;
+  border-bottom: 1px solid var(--xh-line);
+}
+.xh-modal-body {
+  padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px;
+}
+.xh-modal-foot {
+  display: flex; align-items: center; gap: 8px; justify-content: flex-end;
+  padding: 12px 16px; border-top: 1px solid var(--xh-line); background: #fafbfc;
+}
+.xh-modal-err { flex: 1; color: #dc2626; font-size: 12.5px; }
+.xh-field { display: flex; flex-direction: column; gap: 6px; }
+.xh-field label { font-size: 12px; font-weight: 600; color: #64748b; }
+.xh-input {
+  width: 100%; box-sizing: border-box; padding: 8px 10px; font-size: 13px;
+  color: #0f172a; background: #fff; border: 1px solid #cbd5e1; border-radius: 8px; outline: none;
+}
+.xh-input:focus { border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37,99,235,.12); }
+.xh-textarea { min-height: 110px; resize: vertical; line-height: 1.5; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+.xh-path {
+  padding: 6px 10px; border-radius: 6px; background: #f1f5f9;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px;
+  color: #334155; word-break: break-all;
+}
+.xh-hint { font-size: 12px; color: #94a3b8; line-height: 1.5; }
+.xh-warn { font-size: 13.5px; color: #334155; line-height: 1.6; }
+
+/* 离线任务 */
+.xh-task {
+  display: flex; flex-direction: column; gap: 6px; padding: 10px 12px;
+  border: 1px solid var(--xh-line); border-radius: 10px; background: #fff;
+}
+.xh-task-top { display: flex; align-items: center; gap: 8px; }
+.xh-task-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 13px; color: #1e293b; }
+.xh-task-state { flex: none; padding: 1px 7px; border-radius: 999px; background: #f1f5f9; color: #475569; font-size: 11px; }
+.xh-st-running { background: #dbeafe; color: #1d4ed8; }
+.xh-st-succeeded { background: #dcfce7; color: #15803d; }
+.xh-st-failed, .xh-st-errored { background: #fee2e2; color: #b91c1c; }
+.xh-task-bar { height: 5px; border-radius: 999px; background: #e2e8f0; overflow: hidden; }
+.xh-task-bar i { display: block; height: 100%; border-radius: 999px; background: #2563eb; }
+.xh-task-meta { font-size: 11.5px; color: #94a3b8; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.xh-task-cancel {
+  align-self: flex-end; padding: 3px 10px; border: none; border-radius: 6px;
+  background: #fef2f2; color: #b91c1c; font-size: 11.5px; cursor: pointer;
+}
+.xh-task-cancel:hover { background: #fee2e2; }
+.xh-empty { padding: 8px 2px; color: #9ca3af; font-size: 12.5px; }
+
+/* 轻提示 */
+#xh-toasts {
+  position: fixed; right: 18px; bottom: 18px; z-index: 10000;
+  display: flex; flex-direction: column; gap: 8px; max-width: min(380px, 90vw);
+}
+.xh-toast {
+  padding: 9px 14px; border-radius: 9px; background: #0f172a; color: #fff;
+  font-size: 12.5px; line-height: 1.45; word-break: break-all;
+  box-shadow: 0 8px 24px rgba(15,23,42,.25);
+  transition: opacity .25s, transform .25s;
+}
+.xh-toast-error { background: #b91c1c; }
+.xh-toast-ok { background: #15803d; }
+.xh-toast-out { opacity: 0; transform: translateY(6px); }
+
+@media (max-width: 700px) {
+  #xh-tools { padding: 4px 8px; gap: 2px; }
+  .xh-tool-btn { padding: 3px 7px; font-size: 12px; }
+}
+
 /* 细微平滑滚动条 */
 ::-webkit-scrollbar { width: 8px; height: 8px; }
 ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 6px; }
@@ -616,10 +732,17 @@ body.xh-shell .left-toolbar-box { display: none !important; }
             '<div id="xh-anno-text"></div>' +
             '<button id="xh-anno-close" title="不再显示">✕</button>' +
           '</div>' +
+          '<div id="xh-tools">' +
+            '<button class="xh-tool-btn" id="xh-tool-upload" title="上传文件到当前目录">⬆ 上传</button>' +
+            '<button class="xh-tool-btn" id="xh-tool-mkdir" title="新建文件夹">📁 新建</button>' +
+            '<button class="xh-tool-btn" id="xh-tool-offline" title="离线下载（magnet / ed2k / http）">🔗 离线</button>' +
+            '<button class="xh-tool-btn" id="xh-tool-tasks" title="离线任务列表">🗂 任务</button>' +
+            '<button class="xh-tool-btn" id="xh-tool-refresh" title="刷新当前目录">↻ 刷新</button>' +
+          '</div>' +
           '<div id="xh-list-header">' +
-            '<span class="xhh-name">名称</span>' +
-            '<span class="xhh-size">大小</span>' +
-            '<span class="xhh-time">修改时间</span>' +
+            '<span class="xhh-name" data-sort="name">名称<span class="xhh-arrow">↕</span></span>' +
+            '<span class="xhh-size" data-sort="size">大小<span class="xhh-arrow">↕</span></span>' +
+            '<span class="xhh-time" data-sort="modified">修改时间<span class="xhh-arrow">↕</span></span>' +
           '</div>' +
           '<div id="xh-list"></div>' +
         '</div>';
@@ -665,8 +788,22 @@ body.xh-shell .left-toolbar-box { display: none !important; }
         '<span class="xhf-icon">' + getIcon(it.name, it.is_dir) + '</span>' +
         '<span class="xhf-name">' + esc(it.name) + '</span>' +
         '<span class="xhf-size">' + (it.is_dir ? '-' : fmtSize(it.size)) + '</span>' +
-        '<span class="xhf-time">' + fmtTime(it.modified) + '</span>';
+        '<span class="xhf-time">' + fmtTime(it.modified) + '</span>' +
+        '<span class="xhf-actions">' +
+          '<button class="xhf-act" data-act="download" title="下载">⬇</button>' +
+          '<button class="xhf-act" data-act="rename" title="重命名">✎</button>' +
+          '<button class="xhf-act" data-act="delete" title="删除">🗑</button>' +
+        '</span>';
       row.title = it.name;
+      [].forEach.call(row.querySelectorAll('.xhf-act'), function(btn) {
+        btn.onclick = function(e) {
+          e.stopPropagation();
+          var act = btn.getAttribute('data-act');
+          if (act === 'download') downloadItem(full);
+          else if (act === 'rename') renameItem(full);
+          else if (act === 'delete') deleteItem(full);
+        };
+      });
       row.onclick = function() {
         if (it.is_dir) {
           navTo(full);
@@ -914,6 +1051,411 @@ body.xh-shell .left-toolbar-box { display: none !important; }
 
   /* ---- 导航与路由驱动 ---- */
   var renderSeq = 0, pubSettingsCache = null;
+  /* ---- 排序 ---- */
+  var SORT_KEYS = ['name', 'size', 'modified'];
+  var sortState = { key: 'name', dir: 'asc' };
+  try {
+    var savedSort = JSON.parse(localStorage.getItem('xhSort') || 'null');
+    if (savedSort && SORT_KEYS.indexOf(savedSort.key) > -1) {
+      sortState = { key: savedSort.key, dir: savedSort.dir === 'desc' ? 'desc' : 'asc' };
+    }
+  } catch (e) {}
+
+  function saveSort() {
+    try { localStorage.setItem('xhSort', JSON.stringify(sortState)); } catch (e) {}
+  }
+
+  function sortItems(items) {
+    var key = sortState.key, dir = sortState.dir === 'desc' ? -1 : 1;
+    return items.slice().sort(function(a, b) {
+      if (a.is_dir !== b.is_dir) return a.is_dir ? -1 : 1;
+      var r = 0;
+      if (key === 'size') r = (a.size || 0) - (b.size || 0);
+      else if (key === 'modified') r = String(a.modified || '').localeCompare(String(b.modified || ''));
+      else r = a.name.localeCompare(b.name, 'zh', { numeric: true });
+      if (r === 0) r = a.name.localeCompare(b.name, 'zh', { numeric: true });
+      return r * dir;
+    });
+  }
+
+  function updateSortHeader() {
+    var h = document.getElementById('xh-list-header');
+    if (!h) return;
+    [].forEach.call(h.querySelectorAll('[data-sort]'), function(el) {
+      var active = el.getAttribute('data-sort') === sortState.key;
+      el.classList.toggle('xh-sort-active', active);
+      var arrow = el.querySelector('.xhh-arrow');
+      if (arrow) arrow.textContent = active ? (sortState.dir === 'asc' ? '↑' : '↓') : '↕';
+    });
+  }
+
+  function initSortHeader() {
+    var h = document.getElementById('xh-list-header');
+    if (!h || h.__boundSort) return;
+    h.__boundSort = true;
+    [].forEach.call(h.querySelectorAll('[data-sort]'), function(el) {
+      el.onclick = function() {
+        var k = el.getAttribute('data-sort');
+        if (sortState.key === k) {
+          sortState.dir = sortState.dir === 'asc' ? 'desc' : 'asc';
+        } else {
+          sortState.key = k;
+          sortState.dir = k === 'name' ? 'asc' : 'desc';
+        }
+        saveSort();
+        updateSortHeader();
+        rerenderList();
+      };
+    });
+  }
+
+  function rerenderList() {
+    var mid = shellState.mid;
+    if (!mid) return;
+    var items = shellState.listCache[mid];
+    if (!items) { renderAll(true); return; }
+    renderList(mid, sortItems(items), shellState.sel);
+  }
+
+  /* ---- 轻提示 / 弹窗 ---- */
+  function toast(msg, type, ms) {
+    var host = document.getElementById('xh-toasts');
+    if (!host) { host = el('div'); host.id = 'xh-toasts'; document.body.appendChild(host); }
+    var t = el('div', 'xh-toast' + (type ? ' xh-toast-' + type : ''), msg);
+    host.appendChild(t);
+    var life = ms || 2800;
+    setTimeout(function() { t.classList.add('xh-toast-out'); }, life);
+    setTimeout(function() { if (t.parentNode) t.parentNode.removeChild(t); }, life + 300);
+    return t;
+  }
+
+  function xhDialog(title, bodyHTML, onOk, okText) {
+    var mask = el('div', 'xh-modal-mask');
+    mask.innerHTML =
+      '<div class="xh-modal" role="dialog" aria-modal="true">' +
+        '<div class="xh-modal-head"><span>' + esc(title) + '</span>' +
+          '<button class="xh-btn-icon xh-modal-x" title="关闭">✕</button></div>' +
+        '<div class="xh-modal-body">' + bodyHTML + '</div>' +
+        '<div class="xh-modal-foot">' +
+          '<span class="xh-modal-err"></span>' +
+          '<button class="xh-sec-btn xh-modal-cancel">取消</button>' +
+          '<button class="xh-primary-btn xh-modal-ok">' + esc(okText || '确定') + '</button>' +
+        '</div>' +
+      '</div>';
+    document.body.appendChild(mask);
+    var dlg = { mask: mask, body: mask.querySelector('.xh-modal-body') };
+    function close() { if (mask.parentNode) mask.parentNode.removeChild(mask); }
+    dlg.close = close;
+    mask.querySelector('.xh-modal-x').onclick = close;
+    mask.querySelector('.xh-modal-cancel').onclick = close;
+    mask.onclick = function(e) { if (e.target === mask) close(); };
+    var okBtn = mask.querySelector('.xh-modal-ok');
+    var errEl = mask.querySelector('.xh-modal-err');
+    okBtn.onclick = function() {
+      errEl.textContent = '';
+      okBtn.disabled = true;
+      Promise.resolve().then(function() { return onOk(dlg); }).then(function() {
+        close();
+      }).catch(function(e) {
+        errEl.textContent = (e && e.message) || '操作失败';
+        okBtn.disabled = false;
+      });
+    };
+    return dlg;
+  }
+
+  function apiOk(path, data) {
+    return api(path, data).then(function(j) {
+      if (!j || j.code !== 200) throw new Error((j && j.message) || '请求失败');
+      return j;
+    });
+  }
+
+  function refreshList() { renderAll(true); }
+
+  /* ---- 文件操作 ---- */
+  function downloadItem(full) {
+    api('/api/fs/get', { path: full }).then(function(j) {
+      var d = (j && j.data) || {};
+      var url = location.origin + '/d' + encodeURI(full);
+      if (d.sign) url += (url.indexOf('?') > -1 ? '&' : '?') + 'sign=' + d.sign;
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = baseName(full);
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    }).catch(function(e) { toast('下载失败：' + e.message, 'error'); });
+  }
+
+  function newFolder() {
+    var dir = shellState.mid || cur();
+    var dlg = xhDialog('新建文件夹',
+      '<div class="xh-field"><label>位置</label><div class="xh-path">' + esc(dir) + '</div></div>' +
+      '<div class="xh-field"><label>名称</label>' +
+        '<input class="xh-input" id="xh-mk-name" placeholder="例如：新文件夹" autocomplete="off"></div>',
+      function() {
+        var name = dlg.body.querySelector('#xh-mk-name').value.trim();
+        if (!name) throw new Error('请输入文件夹名称');
+        if (/[\\/]/.test(name)) throw new Error('名称不能包含 / 或 \\');
+        return apiOk('/api/fs/mkdir', { path: dir === '/' ? '/' + name : dir + '/' + name })
+          .then(function() { toast('已创建：' + name, 'ok'); refreshList(); });
+      }, '创建');
+    setTimeout(function() {
+      var i = dlg.body.querySelector('#xh-mk-name');
+      if (i) i.focus();
+    }, 50);
+  }
+
+  function renameItem(full) {
+    var oldName = baseName(full);
+    var dlg = xhDialog('重命名',
+      '<div class="xh-field"><label>原名称</label><div class="xh-path">' + esc(oldName) + '</div></div>' +
+      '<div class="xh-field"><label>新名称</label>' +
+        '<input class="xh-input" id="xh-rn-name" autocomplete="off"></div>',
+      function() {
+        var name = dlg.body.querySelector('#xh-rn-name').value.trim();
+        if (!name) throw new Error('请输入新名称');
+        if (/[\\/]/.test(name)) throw new Error('名称不能包含 / 或 \\');
+        if (name === oldName) return;
+        return apiOk('/api/fs/rename', { path: full, name: name })
+          .then(function() {
+            if (shellState.sel === full) closePreview();
+            toast('已重命名为：' + name, 'ok');
+            refreshList();
+          });
+      }, '保存');
+    var input = dlg.body.querySelector('#xh-rn-name');
+    input.value = oldName;
+    setTimeout(function() {
+      input.focus();
+      var dot = oldName.lastIndexOf('.');
+      if (dot > 0) input.setSelectionRange(0, dot); else input.select();
+    }, 50);
+  }
+
+  function deleteItem(full) {
+    var name = baseName(full);
+    xhDialog('删除确认',
+      '<div class="xh-warn">将删除 <b>' + esc(name) + '</b>。<br>该操作不可恢复，确定继续？</div>',
+      function() {
+        return apiOk('/api/fs/remove', { dir: parentPath(full), names: [name] })
+          .then(function() {
+            if (shellState.sel === full) closePreview();
+            toast('已删除：' + name, 'ok');
+            refreshList();
+          });
+      }, '删除');
+  }
+
+  /* ---- 上传 ---- */
+  function pickFiles() {
+    var input = document.getElementById('xh-upload-input');
+    if (!input) {
+      input = document.createElement('input');
+      input.type = 'file';
+      input.multiple = true;
+      input.id = 'xh-upload-input';
+      input.style.display = 'none';
+      document.body.appendChild(input);
+    }
+    input.value = '';
+    input.onchange = function() {
+      var files = [].slice.call(input.files || []);
+      if (files.length) uploadFiles(files);
+    };
+    input.click();
+  }
+
+  function uploadFiles(files) {
+    var dir = shellState.mid || cur();
+    var ok = 0, fail = 0, idx = 0;
+    var tip = toast('准备上传 ' + files.length + ' 个文件…', 'info', 600000);
+    function next() {
+      if (idx >= files.length) {
+        tip.textContent = '上传完成：成功 ' + ok + '，失败 ' + fail;
+        tip.className = 'xh-toast xh-toast-' + (fail ? 'error' : 'ok');
+        setTimeout(function() { if (tip.parentNode) tip.remove(); }, 4000);
+        if (ok) refreshList();
+        return;
+      }
+      var f = files[idx++];
+      var full = (dir === '/' ? '' : dir) + '/' + f.name;
+      tip.textContent = '上传中 ' + idx + '/' + files.length + '：' + f.name + '（' + fmtSize(f.size) + '）';
+      fetch('/api/fs/put', {
+        method: 'PUT',
+        headers: {
+          'Authorization': getToken(),
+          'File-Path': encodeURIComponent(full),
+          'Content-Type': f.type || 'application/octet-stream'
+        },
+        body: f
+      }).then(function(r) {
+        return r.json().catch(function() { return {}; }).then(function(j) {
+          if (!r.ok || (j && j.code && j.code !== 200)) {
+            throw new Error((j && j.message) || ('HTTP ' + r.status));
+          }
+          ok++;
+        });
+      }).catch(function(e) {
+        fail++;
+        toast('上传失败：' + f.name + '（' + e.message + '）', 'error', 5000);
+      }).then(next);
+    }
+    next();
+  }
+
+  /* ---- 离线下载 ---- */
+  var TASK_STATE_LABEL = {
+    pending: '等待', running: '下载中', canceling: '取消中', canceled: '已取消',
+    errored: '出错', failing: '失败中', failed: '失败',
+    waiting_retry: '重试等待', before_retry: '待重试', succeeded: '完成'
+  };
+
+  function openOfflineDialog() {
+    var dir = shellState.mid || cur();
+    fetch('/api/public/offline_download_tools?path=' + encodeURIComponent(dir))
+      .then(function(r) { return r.json(); })
+      .then(function(j) {
+        var tools = (j && j.data) || [];
+        if (!tools.length) {
+          toast('当前目录没有可用的离线下载工具', 'error');
+          return;
+        }
+        var opts = tools.map(function(t) {
+          return '<option value="' + esc(t) + '">' + esc(t) + '</option>';
+        }).join('');
+        var dlg = xhDialog('离线下载',
+          '<div class="xh-field"><label>保存到</label><div class="xh-path">' + esc(dir) + '</div></div>' +
+          '<div class="xh-field"><label>下载工具</label>' +
+            '<select class="xh-input" id="xh-od-tool">' + opts + '</select></div>' +
+          '<div class="xh-field"><label>链接（每行一个，支持 http / magnet / ed2k）</label>' +
+            '<textarea class="xh-input xh-textarea" id="xh-od-urls" ' +
+              'placeholder="magnet:?xt=urn:btih:..."></textarea></div>' +
+          '<div class="xh-hint">任务在网盘侧执行，完成后文件直接出现在当前目录，不会经过本机中转。</div>',
+          function() {
+            var urls = dlg.body.querySelector('#xh-od-urls').value
+              .split('\n').map(function(s) { return s.trim(); }).filter(Boolean);
+            if (!urls.length) throw new Error('请至少输入一个链接');
+            var tool = dlg.body.querySelector('#xh-od-tool').value;
+            return apiOk('/api/fs/add_offline_download', {
+              urls: urls,
+              path: dir,
+              tool: tool,
+              delete_policy: 'delete_on_upload_succeed'
+            }).then(function() {
+              toast('已提交 ' + urls.length + ' 个离线任务', 'ok');
+            });
+          }, '开始下载');
+        setTimeout(function() {
+          var t = dlg.body.querySelector('#xh-od-urls');
+          if (t) t.focus();
+        }, 50);
+      })
+      .catch(function(e) { toast('获取离线工具失败：' + e.message, 'error'); });
+  }
+
+  function openTasksDialog() {
+    var mask = el('div', 'xh-modal-mask');
+    mask.innerHTML =
+      '<div class="xh-modal xh-modal-wide" role="dialog" aria-modal="true">' +
+        '<div class="xh-modal-head"><span>离线下载任务</span>' +
+          '<button class="xh-btn-icon xh-modal-x" title="关闭">✕</button></div>' +
+        '<div class="xh-modal-body" id="xh-task-body"><div class="xh-empty">加载中…</div></div>' +
+        '<div class="xh-modal-foot">' +
+          '<button class="xh-sec-btn" id="xh-task-refresh">刷新</button>' +
+          '<button class="xh-primary-btn" id="xh-task-close">关闭</button>' +
+        '</div>' +
+      '</div>';
+    document.body.appendChild(mask);
+    var body = mask.querySelector('#xh-task-body');
+    var timer = null;
+
+    function taskCard(t) {
+      var st = t.state || '';
+      var label = TASK_STATE_LABEL[st] || st || '未知';
+      var pct = Math.max(0, Math.min(100, Math.round(t.progress || 0)));
+      var active = ['pending', 'running', 'canceling', 'waiting_retry', 'before_retry'].indexOf(st) > -1;
+      return '<div class="xh-task">' +
+        '<div class="xh-task-top">' +
+          '<span class="xh-task-name" title="' + esc(t.name) + '">' + esc(t.name) + '</span>' +
+          '<span class="xh-task-state xh-st-' + esc(st) + '">' + esc(label) + '</span>' +
+        '</div>' +
+        '<div class="xh-task-bar"><i style="width:' + pct + '%"></i></div>' +
+        '<div class="xh-task-meta">' + (t.error ? esc(t.error) : pct + '%') + '</div>' +
+        (active ? '<button class="xh-task-cancel" data-tid="' + esc(t.id) + '">取消任务</button>' : '') +
+      '</div>';
+    }
+
+    function render(undone, done) {
+      var html = '';
+      if (undone.length) {
+        html += '<div class="xh-field"><label>进行中（' + undone.length + '）</label></div>';
+        html += undone.map(taskCard).join('');
+      }
+      if (done.length) {
+        html += '<div class="xh-field" style="margin-top:4px"><label>最近完成（' + done.length + '）</label></div>';
+        html += done.slice(0, 10).map(taskCard).join('');
+      }
+      if (!html) html = '<div class="xh-empty">暂无离线下载任务</div>';
+      body.innerHTML = html;
+      [].forEach.call(body.querySelectorAll('.xh-task-cancel'), function(btn) {
+        btn.onclick = function() {
+          btn.disabled = true;
+          fetch('/api/task/offline_download/cancel?tid=' + encodeURIComponent(btn.getAttribute('data-tid')), {
+            method: 'POST',
+            headers: { 'Authorization': getToken() }
+          }).then(function(r) { return r.json(); }).then(function(j) {
+            if (!j || j.code !== 200) throw new Error((j && j.message) || '取消失败');
+            toast('已请求取消', 'ok');
+            load();
+          }).catch(function(e) {
+            toast('取消失败：' + e.message, 'error');
+            btn.disabled = false;
+          });
+        };
+      });
+    }
+
+    function load() {
+      Promise.all([
+        api('/api/task/offline_download/undone').catch(function() { return { data: [] }; }),
+        api('/api/task/offline_download/done').catch(function() { return { data: [] }; })
+      ]).then(function(rs) {
+        var undone = (rs[0] && rs[0].data) || [];
+        var done = (rs[1] && rs[1].data) || [];
+        if (!Array.isArray(undone)) undone = [];
+        if (!Array.isArray(done)) done = [];
+        render(undone, done);
+      });
+    }
+
+    function close() {
+      if (timer) clearInterval(timer);
+      if (mask.parentNode) mask.parentNode.removeChild(mask);
+    }
+    mask.querySelector('.xh-modal-x').onclick = close;
+    mask.querySelector('#xh-task-close').onclick = close;
+    mask.querySelector('#xh-task-refresh').onclick = load;
+    mask.onclick = function(e) { if (e.target === mask) close(); };
+    load();
+    timer = setInterval(load, 4000);
+  }
+
+  function initToolbar() {
+    var bar = document.getElementById('xh-tools');
+    if (!bar || bar.__bound) return;
+    bar.__bound = true;
+    bar.querySelector('#xh-tool-upload').onclick = pickFiles;
+    bar.querySelector('#xh-tool-mkdir').onclick = newFolder;
+    bar.querySelector('#xh-tool-offline').onclick = openOfflineDialog;
+    bar.querySelector('#xh-tool-tasks').onclick = openTasksDialog;
+    bar.querySelector('#xh-tool-refresh').onclick = function() {
+      refreshList();
+      toast('已刷新当前目录', 'ok', 1500);
+    };
+  }
+
   function getPubSettings() {
     if (pubSettingsCache) return Promise.resolve(pubSettingsCache);
     return fetch('/api/public/settings').then(function(r){ return r.json(); }).then(function(j){
@@ -922,9 +1464,14 @@ body.xh-shell .left-toolbar-box { display: none !important; }
     }).catch(function(){ return {}; });
   }
 
-  function renderAll() {
+  function renderAll(forceRefresh) {
     if (!ensureShellDom()) return;
     initResizer();
+    initSortHeader();
+    initToolbar();
+    updateSortHeader();
+    var bar = document.getElementById('xh-tools');
+    if (bar) bar.style.display = getToken() ? '' : 'none';
     var seq = ++renderSeq;
     var p = cur();
     if (p.indexOf('/@') === 0) {
@@ -966,18 +1513,16 @@ body.xh-shell .left-toolbar-box { display: none !important; }
       var d = j && j.data;
       var isDir = !d || d.is_dir !== false;
       var mid = isDir ? p : parentPath(p);
+      shellState.mid = mid;
       renderCrumb(mid);
       if (shellState.listCache[mid]) {
-        renderList(mid, shellState.listCache[mid], shellState.sel);
+        renderList(mid, sortItems(shellState.listCache[mid]), shellState.sel);
       }
-      return api('/api/fs/list', { path: mid, page: 1, per_page: 1000, refresh: false }).then(function(lj) {
+      return api('/api/fs/list', { path: mid, page: 1, per_page: 1000, refresh: !!forceRefresh }).then(function(lj) {
         if (seq !== renderSeq) return;
-        var items = (lj && lj.data && lj.data.content || []).slice().sort(function(a,b){
-          if (a.is_dir !== b.is_dir) return a.is_dir ? -1 : 1;
-          return a.name.localeCompare(b.name, 'zh');
-        });
+        var items = (lj && lj.data && lj.data.content || []).slice();
         shellState.listCache[mid] = items;
-        renderList(mid, items, shellState.sel);
+        renderList(mid, sortItems(items), shellState.sel);
         var rm = (lj && lj.data && lj.data.readme) || '';
         if (!isDir && shellState.sel !== p) {
           shellState.sel = p;
