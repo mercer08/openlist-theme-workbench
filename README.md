@@ -11,6 +11,7 @@
 
 <p align="center">
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License"></a>
+  <a href="https://github.com/mercer08/openlist-theme-workbench/actions/workflows/validate.yml"><img src="https://github.com/mercer08/openlist-theme-workbench/actions/workflows/validate.yml/badge.svg" alt="validate"></a>
   <a href="https://github.com/OpenListTeam/OpenList"><img src="https://img.shields.io/badge/OpenList-v4.x-brightgreen.svg" alt="OpenList"></a>
   <a href="https://github.com/alist-org/alist"><img src="https://img.shields.io/badge/AList-v3.x-green.svg" alt="AList"></a>
   <img src="https://img.shields.io/badge/Deploy-Zero--Intrusion-orange.svg" alt="Zero-Intrusion">

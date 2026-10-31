@@ -63,3 +63,13 @@ git diff main upstream/main -- dist/workbench.html \
 ```
 
 出现新的外链域名、动态脚本、token 读取，先停下来人工确认。
+
+## 提交前自检
+
+```bash
+python3 scripts/check.py
+```
+
+检查项：内联脚本语法（`node --check`）、`eval` / `new Function` / `document.write` / `atob`、站外域名白名单（`res.oplist.org`、`*.115cdn.net`、`*.115.com`）、远程 `<script src>`。
+
+同一脚本会在 GitHub Actions（`.github/workflows/validate.yml`，托管 runner、只读权限、无 secrets）里对 `push` 与 `pull_request` 自动执行；CI 只做校验，不接触任何内网资源，部署仍需手动执行。
