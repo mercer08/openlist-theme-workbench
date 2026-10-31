@@ -178,8 +178,8 @@ location = /pdfjs/web/viewer.html {
 本主题的实现方式是**把一整段 HTML / CSS / JS 注入 OpenList 的 `customize_head`（自定义头部）**，因此请把它当作「上线一段代码」，而不是「换一个皮肤」：
 
 - 脚本以**当前登录用户**的身份、在同源下调用 `/api/*`，并可读取 `localStorage.token`；在管理员会话中，这等同于管理员权限。
-- Office 文档预览分支会把**带签名的文件直链**发送给 `view.officeapps.live.com`；不需要该功能时，建议删掉该分支或改为直接下载。
-- 没有内置 CSP / SRI，注入的脚本不受内容安全策略约束。公网站点建议在反向代理层加 CSP，把 `frame-src`、`connect-src` 限制为 `'self'`。
+- 本 fork **已移除第三方在线预览**：Word / PPT 不再发送给 `view.officeapps.live.com`，只提供下载；文件直链仅在本站与文件源（如 115 CDN）之间流转。
+- 主题本身没有 CSP / SRI，注入的脚本不受内容安全策略约束。建议在反向代理层加 CSP 收紧 `frame-src` / `connect-src`（示例见 [FORK.md](FORK.md)）。
 - **不要直接跟随上游 `main` 自动升级**：升级前先 diff 新增的网络请求、动态脚本与 token 读取（方法见 [FORK.md](FORK.md)）。
 - 日常浏览建议使用非管理员账号，把 `admin` 会话留给管理操作。
 
